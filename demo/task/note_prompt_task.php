@@ -20,15 +20,19 @@ $task->name = 'NOTE_TASK';
 
 $task->onWorkerStart = function ($task) {
     $config = [];
+    $db = [];
     if (file_exists(__DIR__ . '/../../config/redis.php')) {
         $config = include __DIR__ . '/../../config/redis.php';
+    }
+    if (file_exists(__DIR__ . '/../../config/db.php')) {
+        $db = include __DIR__ . '/../../config/db.php';
     }
     $redis = MyRedis::getInstance($config);
     $redis->setPrefix('note_');
 
     // 每2.5秒执行一次
     $time_interval = 1;
-    Timer::add($time_interval, function () use ($config, $redis) {
+    Timer::add($time_interval, function () use ($db, $redis) {
         $res = $redis->zRange('note_prompt_task', 0, 1);
         if (empty($res)) {
             echo "无任务\n";
@@ -39,11 +43,8 @@ $task->onWorkerStart = function ($task) {
         echo $score . "\n";
         if ($score < time()) {
             //发送邮件
-            $config['host'] = '127.0.0.1';
-            $config['user'] = 'root';
-            $config['pwd'] = 'LoveYi@521';
-            $config['dbname'] = 'note';
-            $pdo = \limx\tools\MyPDO::getInstance($config);
+            $db['dbname'] = 'note';
+            $pdo = \limx\tools\MyPDO::getInstance($db);
             $sql = "SELECT n.msg,u.name,u.email FROM note as n
                 LEFT JOIN user as u on n.uid = u.id
                 WHERE n.id = {$note_id};";
