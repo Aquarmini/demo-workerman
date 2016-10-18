@@ -1,0 +1,9 @@
+{
+    "require": {
+        "limingxinleo/limx-pdo": "dev-master",
+        "limingxinleo/limx-func": "dev-master",
+        "limingxinleo/limx-redis": "dev-master",
+        "workerman/phpsocket.io": "^1.0",
+        "workerman/workerman": "^3.3"
+    }
+}
