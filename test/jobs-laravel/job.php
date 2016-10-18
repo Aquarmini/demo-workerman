@@ -16,20 +16,15 @@ use \limx\tools\MyRedis;
 
 $task = new Worker();
 // 开启多少个进程运行定时任务，注意多进程并发问题
-$task->count = 1;
-$task->name = 'ATUO_DEPLOY_TASK';
-
+$task->count = 10;
+$task->name = 'LARAVEL JOBS TEST';
 
 $task->onWorkerStart = function ($task) {
-    $config = [];
-    if (file_exists(__DIR__ . '/../../config/db.php')) {
-        $config = include __DIR__ . '/../../config/db.php';
-    }
-
     // 每1秒执行一次
-    $time_interval = 1;
-    Timer::add($time_interval, function () use ($config) {
-
+    $time_interval = 0.001;
+    Timer::add($time_interval, function () {
+        // 访问接口
+        \limx\func\Curl::get('http://laravel.tp5.lmx0536.cn/api/jobs');
     });
 };
 
