@@ -21,10 +21,16 @@ $task->name = 'ATUO_DEPLOY_TASK';
 
 
 $task->onWorkerStart = function ($task) {
+    $config = [];
+    if (file_exists(__DIR__ . '/../../config/redis.php')) {
+        $config = include __DIR__ . '/../../config/redis.php';
+    }
+    $redis = MyRedis::getInstance($config);
+    $redis->setPrefix('deploy_');
+
     // 每1秒执行一次
     $time_interval = 1;
-    Timer::add($time_interval, function () {
-
+    Timer::add($time_interval, function () use ($config, $redis) {
         //获取文件大小
         $fileDir = '/_html/zips';
         $tp5Dir = '/_html/html/tp5';
@@ -32,22 +38,12 @@ $task->onWorkerStart = function ($task) {
         traverse($fileDir, $res, 'zip');
 
         if (!empty($res)) {
-            $config = [];
-            if (file_exists(__DIR__ . '/../../config/redis.php')) {
-                $config = include __DIR__ . '/../../config/redis.php';
-            }
-            dump($config);
-            $redis = MyRedis::getInstance($config);
-            $redis->setPrefix('deploy_');
-
             foreach ($res as $i => $v) {
-                dump($redis->keys('*'));
                 if (empty($redis->keys(md5($v)))) {
                     $redis->set(md5($v), filesize($v));
-                    echo md5($v) . "\n";
                 } else {
                     $fileSize = filesize($v);
-                    echo $fileSize . "\n";
+                    echo $v . $fileSize . "\n";
                     if ($fileSize == $redis->get(md5($v))) {
                         //加压缩文件
                         $zip = new ZipArchive();
