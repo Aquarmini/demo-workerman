@@ -24,7 +24,8 @@ $task->onWorkerStart = function ($task) {
     $time_interval = 0.001;
     Timer::add($time_interval, function () {
         // 访问接口
-        \limx\func\Curl::get('http://laravel.tp5.lmx0536.cn/api/jobs');
+//        \limx\func\Curl::get('http://laravel.tp5.lmx0536.cn/api/jobs');
+        \limx\func\Curl::get('http://prop.tp5.lmx0536.cn/cards/index');
     });
 };
 
