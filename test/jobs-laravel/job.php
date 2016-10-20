@@ -22,10 +22,12 @@ $task->name = 'LARAVEL JOBS TEST';
 $task->onWorkerStart = function ($task) {
     // 每1秒执行一次
     $time_interval = 0.001;
-    Timer::add($time_interval, function () {
+    $count = 0;
+    Timer::add($time_interval, function () use (&$count) {
         // 访问接口
 //        \limx\func\Curl::get('http://laravel.tp5.lmx0536.cn/api/jobs');
         \limx\func\Curl::get('http://prop.tp5.lmx0536.cn/cards/index');
+        echo ++$count . "\n";
     });
 };
 
