@@ -28,7 +28,7 @@ $task->onWorkerStart = function ($task) {
         $db = include __DIR__ . '/../../config/db.php';
     }
     $redis = MyRedis::getInstance($config);
-    $redis->setPrefix('note');
+    $redis->setPrefix('note:');
 
     // 每2.5秒执行一次
     $time_interval = 1;

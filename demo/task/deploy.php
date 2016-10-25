@@ -26,7 +26,7 @@ $task->onWorkerStart = function ($task) {
         $config = include __DIR__ . '/../../config/redis.php';
     }
     $redis = MyRedis::getInstance($config);
-    $redis->setPrefix('deploy');
+    $redis->setPrefix('deploy:');
 
     // 每1秒执行一次
     $time_interval = 1;
