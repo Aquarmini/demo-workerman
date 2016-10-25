@@ -28,18 +28,18 @@ $task->onWorkerStart = function ($task) {
         $db = include __DIR__ . '/../../config/db.php';
     }
     $redis = MyRedis::getInstance($config);
-    $redis->setPrefix('note_');
+    $redis->setPrefix('note');
 
     // 每2.5秒执行一次
     $time_interval = 1;
     Timer::add($time_interval, function () use ($db, $redis) {
-        $res = $redis->zRange('note_prompt_task', 0, 1);
+        $res = $redis->zRange('prompt:task', 0, 1);
         if (empty($res)) {
             echo "无任务\n";
             return;
         }
         $note_id = $res[0];
-        $score = $redis->zScore('note_prompt_task', $note_id);
+        $score = $redis->zScore('prompt:task', $note_id);
         echo $score . "\n";
         if ($score < time()) {
             //发送邮件
@@ -81,7 +81,7 @@ $task->onWorkerStart = function ($task) {
                 }
             }
             //删除任务
-            $redis->zRem('note_prompt_task', $note_id);
+            $redis->zRem('prompt:task', $note_id);
         }
 
     });
